@@ -1,0 +1,475 @@
+immune_royalty_os:
+  id: "immune-royalty-os-v0.1"
+  title: "Immune Royalty OS v0.1"
+  short_name: "IROS v0.1"
+  version: "0.1.0"
+  status: "draft-core"
+  language: "ja"
+  license_mode: "conceptual-open-spec"
+
+  purpose:
+    summary: >
+      印税OSに免疫的調整機構を導入し、
+      痕跡の保護と新規構造の成長を両立させるための中核仕様。
+    objective:
+      - "盗用・擬似構造を検出する"
+      - "シンクロニシティ（独立到達）を保護する"
+      - "過剰記憶による自己免疫疾患を防ぐ"
+      - "古い痕跡の暴走を減衰させる"
+      - "新しい問い・新芽の生存可能性を確保する"
+
+  design_principles:
+    - id: "dp-01"
+      name: "path_over_similarity"
+      description: "構造の近さより、生成経路の独立性を重視する"
+    - id: "dp-02"
+      name: "tolerance_before_rejection"
+      description: "即時排除より先に保留・寛容・観察を行う"
+    - id: "dp-03"
+      name: "decay_prevents_lock"
+      description: "減衰は老化防止であり、既得権の固定化を防ぐ"
+    - id: "dp-04"
+      name: "protect_novelty"
+      description: "新規構造には一定期間の保護を与える"
+    - id: "dp-05"
+      name: "explainable_immunity"
+      description: "すべての免疫判定は説明可能でなければならない"
+
+  core_concepts:
+    trace: "生成・参照・変容の痕跡"
+    path_trace: "問いから出力までの生成経路"
+    provenance: "起源・主体・時系列・参照元の由来情報"
+    transformation: "親構造からの変容内容"
+    tolerance_zone: "類似していても即時攻撃しない保留領域"
+    novelty_window: "新規構造を防御的に保護する期間"
+    pseudo_structure: "経路が短く変容が薄い擬似的新規構造"
+    synchronistic_structure: "独立経路から到達した類似構造"
+    immune_response: "保護・保留・還元・減衰・排除の判定"
+    immune_bug: "過敏反応・過剰記憶・境界崩壊などの構造障害"
+
+  system_layers:
+    - id: "layer-trace"
+      name: "Trace Layer"
+      role: "生成経路・起源・変容差分の記録"
+    - id: "layer-tolerance"
+      name: "Tolerance Layer"
+      role: "寛容判定・保留判定・新規保護"
+    - id: "layer-decay"
+      name: "Decay Layer"
+      role: "過去痕跡の減衰と集中抑制"
+    - id: "layer-response"
+      name: "Response Layer"
+      role: "還元・保留・排除・監査の実行"
+
+  actors:
+    - id: "human_creator"
+      description: "人間の創作者"
+    - id: "ai_agent"
+      description: "AI生成主体または代理主体"
+    - id: "hybrid_creator"
+      description: "人間とAIの共同生成主体"
+    - id: "immune_auditor"
+      description: "免疫判定の監査主体"
+    - id: "governance_operator"
+      description: "閾値・減衰率・例外規則の管理主体"
+
+  trace_model:
+    lineage_model: "dag"
+    required_fields:
+      - "trace_id"
+      - "timestamp"
+      - "creator_type"
+      - "creator_id"
+      - "origin_question"
+      - "parent_trace_ids"
+      - "referenced_trace_ids"
+      - "path_nodes"
+      - "transformation_log"
+      - "context_tags"
+      - "generation_mode"
+    optional_fields:
+      - "session_id"
+      - "toolchain"
+      - "environment"
+      - "diff_signature"
+      - "confidence_score"
+      - "signature_verification"
+      - "notes"
+
+    record_schema:
+      trace_id: "string"
+      timestamp: "datetime"
+      creator_type: "enum[human, ai, hybrid]"
+      creator_id: "string"
+      origin_question: "string"
+      parent_trace_ids: "list[string]"
+      referenced_trace_ids: "list[string]"
+      path_nodes:
+        type: "list[object]"
+        item_schema:
+          step_id: "string"
+          step_type: "enum[question, reference, transformation, synthesis, output]"
+          content_hash: "string"
+          source_trace_id: "string|null"
+          timestamp: "datetime"
+      transformation_log:
+        type: "list[object]"
+        item_schema:
+          transform_type: "enum[rewrite, expand, compress, remix, abstract, invert, recombine, independent-arrival]"
+          description: "string"
+          delta_score: "float"
+      context_tags: "list[string]"
+      generation_mode: "enum[original, derived, collaborative, uncertain]"
+      diff_signature: "string|null"
+      confidence_score: "float|null"
+      signature_verification: "enum[verified, unverified, unknown]|null"
+      notes: "string|null"
+
+  immunity_engine:
+    inputs:
+      - "candidate_trace"
+      - "neighbor_traces"
+      - "path_graph"
+      - "policy_profile"
+      - "decay_state"
+    outputs:
+      - "immune_class"
+      - "risk_score"
+      - "novelty_score"
+      - "path_independence_score"
+      - "recommended_action"
+      - "explanation"
+
+    immune_classes:
+      - id: "independent_novelty"
+        description: "独立性が高く、新規性も十分ある"
+      - id: "synchronistic_convergence"
+        description: "構造は近いが経路が独立している"
+      - id: "tolerated_derivation"
+        description: "派生だが攻撃不要。還元対象"
+      - id: "pseudo_structure"
+        description: "変容が薄く、経路が短い擬似構造"
+      - id: "boundary_uncertain"
+        description: "自己/非自己境界が曖昧"
+      - id: "immune_bug_candidate"
+        description: "過敏反応・過剰記憶などの疑い"
+
+  scoring:
+    similarity_score:
+      symbol: "S"
+      range: [0.0, 1.0]
+      meaning: "構造類似度"
+    path_independence_score:
+      symbol: "P"
+      range: [0.0, 1.0]
+      meaning: "生成経路の独立性"
+    transformation_score:
+      symbol: "T"
+      range: [0.0, 1.0]
+      meaning: "親構造からの変容量"
+    novelty_score:
+      symbol: "N"
+      range: [0.0, 1.0]
+      meaning: "新規性総合値"
+    concentration_score:
+      symbol: "C"
+      range: [0.0, 1.0]
+      meaning: "価値集中度"
+    inflammation_score:
+      symbol: "I"
+      range: [0.0, 1.0]
+      meaning: "過敏反応リスク"
+    boundary_confusion_score:
+      symbol: "B"
+      range: [0.0, 1.0]
+      meaning: "自己/非自己境界混乱度"
+
+    derived_metrics:
+      novelty_score_formula: "N = (0.40 * P) + (0.35 * T) + (0.25 * (1 - S))"
+      pseudo_structure_risk_formula: "R_pseudo = (0.45 * S) + (0.35 * (1 - P)) + (0.20 * (1 - T))"
+      inflammation_score_formula: "I = (0.50 * historical_reaction_density) + (0.30 * C) + (0.20 * false_positive_rate)"
+      boundary_confusion_formula: "B = ambiguity_in_authorship + ambiguity_in_parentage + ambiguity_in_agent_role"
+      note: "係数は初期値。運用で調整可能"
+
+  tolerance_layer:
+    policy_goal: "類似構造への過剰攻撃を防ぎ、新芽を保護する"
+
+    parameters:
+      similarity_hold_threshold: 0.78
+      path_independence_accept_threshold: 0.72
+      transformation_accept_threshold: 0.45
+      novelty_protection_window_days: 90
+      tolerance_band_width: 0.12
+      uncertain_boundary_hold: true
+
+    rules:
+      - id: "tol-01"
+        condition: "S >= similarity_hold_threshold AND P >= path_independence_accept_threshold"
+        action: "classify_as_synchronistic_convergence"
+        meaning: "似ていても経路独立なら保護"
+      - id: "tol-02"
+        condition: "S >= similarity_hold_threshold AND T >= transformation_accept_threshold AND P >= 0.50"
+        action: "classify_as_tolerated_derivation"
+        meaning: "派生だが十分な変容があれば攻撃しない"
+      - id: "tol-03"
+        condition: "candidate_age_days <= novelty_protection_window_days"
+        action: "apply_novelty_protection"
+        meaning: "新芽には初期保護を与える"
+      - id: "tol-04"
+        condition: "B >= 0.50"
+        action: "hold_for_boundary_review"
+        meaning: "境界が曖昧なら保留"
+      - id: "tol-05"
+        condition: "immune_bug_signal == true"
+        action: "suppress_aggressive_response"
+        meaning: "自己免疫疑い時は攻撃を弱める"
+
+    actions:
+      apply_novelty_protection:
+        effect:
+          lower_rejection_probability: 0.40
+          lower_trace_charge: 0.25
+          increase_review_time: true
+      hold_for_boundary_review:
+        effect:
+          temporary_status: "hold"
+          require_human_audit: true
+      suppress_aggressive_response:
+        effect:
+          max_response_level: "observe"
+          freeze_penalty_execution: true
+
+  decay_layer:
+    policy_goal: "古い痕跡の暴走と価値固定化を防ぐ"
+
+    parameters:
+      lineage_decay_lambda: 0.35
+      concentration_cap: 0.82
+      accelerated_decay_trigger: 0.76
+      accelerated_decay_multiplier: 1.80
+      chronic_inflammation_trigger: 0.68
+
+    formulas:
+      lineage_decay: "Decay(g) = exp(-lambda * g)"
+      accelerated_decay: "Decay'(g) = exp(-(lambda * accelerated_decay_multiplier) * g)"
+      concentration_penalty: "Penalty(C) = max(0, C - concentration_cap)"
+      inflammation_suppression: "Suppression = I * 0.50 when I >= chronic_inflammation_trigger"
+
+    rules:
+      - id: "dec-01"
+        condition: "C >= concentration_cap"
+        action: "apply_concentration_penalty"
+      - id: "dec-02"
+        condition: "I >= chronic_inflammation_trigger"
+        action: "apply_inflammation_suppression"
+      - id: "dec-03"
+        condition: "old_trace_dominance >= accelerated_decay_trigger"
+        action: "apply_accelerated_decay"
+      - id: "dec-04"
+        condition: "repeated_false_positive_events >= 3"
+        action: "increase_local_decay_for_detector"
+      - id: "dec-05"
+        condition: "legacy_trace_blocks_novelty == true"
+        action: "reduce_legacy_priority_temporarily"
+
+    actions:
+      apply_concentration_penalty:
+        effect:
+          reduce_allocation_weight: 0.20
+          redistribute_to_novelty_pool: 0.20
+      apply_inflammation_suppression:
+        effect:
+          lower_auto_rejection: true
+          require_explanation: true
+      apply_accelerated_decay:
+        effect:
+          use_formula: "accelerated_decay"
+      increase_local_decay_for_detector:
+        effect:
+          detector_sensitivity_reduction: 0.15
+      reduce_legacy_priority_temporarily:
+        effect:
+          legacy_weight_multiplier: 0.70
+          review_after_days: 30
+
+  response_layer:
+    policy_goal: "寛容・還元・排除を説明可能に実行する"
+
+    actions:
+      - id: "protect"
+        description: "独立創造または同期的到達として保護"
+      - id: "tolerate"
+        description: "派生として許容しつつ還元計算に含める"
+      - id: "hold"
+        description: "判定保留。追加監査へ回す"
+      - id: "decay"
+        description: "影響力を減衰させる"
+      - id: "reject"
+        description: "擬似構造として排除"
+      - id: "audit"
+        description: "人間または上位監査へ送る"
+
+    decision_matrix:
+      - immune_class: "independent_novelty"
+        action: "protect"
+      - immune_class: "synchronistic_convergence"
+        action: "protect"
+      - immune_class: "tolerated_derivation"
+        action: "tolerate"
+      - immune_class: "boundary_uncertain"
+        action: "hold"
+      - immune_class: "pseudo_structure"
+        action: "reject"
+      - immune_class: "immune_bug_candidate"
+        action: "audit"
+
+  pseudo_structure_detection:
+    definition: >
+      擬似構造とは、既存痕跡への依存が強く、
+      経路が短く、変容が薄く、文脈独立性が乏しい構造を指す。
+    signals:
+      - "S is high"
+      - "P is low"
+      - "T is low"
+      - "path length is extremely short"
+      - "context divergence is minimal"
+      - "same-source compression without substantive mutation"
+    reject_condition:
+      expression: "R_pseudo >= 0.78 AND P < 0.35 AND T < 0.25"
+      action: "reject"
+
+  synchronistic_detection:
+    definition: >
+      シンクロニシティとは、構造が近くても、
+      起源・経路・文脈が独立しているため、
+      盗用ではなく独立到達として扱うべき構造を指す。
+    signals:
+      - "S may be high"
+      - "P is high"
+      - "independent origin_question"
+      - "low direct-reference dependency"
+      - "distinct context tags"
+      - "different transformation trajectory"
+    accept_condition:
+      expression: "S >= 0.70 AND P >= 0.72 AND T >= 0.40"
+      action: "classify_as_synchronistic_convergence"
+
+  immune_bug_catalog:
+    - id: "bug-memory-lock"
+      name: "Memory Lock"
+      description: "古い痕跡が減衰せず居座る"
+      indicators:
+        - "old_trace_dominance high"
+        - "novelty rejection rate high"
+        - "decay inefficiency"
+      mitigation:
+        - "apply_accelerated_decay"
+        - "redistribute_to_novelty_pool"
+
+    - id: "bug-boundary-error"
+      name: "Boundary Error"
+      description: "自己/非自己の境界が曖昧"
+      indicators:
+        - "B high"
+        - "uncertain authorship"
+        - "ambiguous parentage"
+      mitigation:
+        - "hold_for_boundary_review"
+        - "require_human_audit"
+
+    - id: "bug-inflammatory-overreaction"
+      name: "Inflammatory Overreaction"
+      description: "類似構造に過剰反応する"
+      indicators:
+        - "I high"
+        - "false_positive_rate rising"
+        - "auto_rejection_rate rising"
+      mitigation:
+        - "suppress_aggressive_response"
+        - "increase_local_decay_for_detector"
+
+    - id: "bug-concentration-storm"
+      name: "Concentration Storm"
+      description: "価値が一部痕跡へ集中しすぎる"
+      indicators:
+        - "C high"
+        - "legacy_trace monopolization"
+      mitigation:
+        - "apply_concentration_penalty"
+        - "novelty_pool redistribution"
+
+  royalty_bridge:
+    description: "免疫判定を印税・還元ロジックへ接続する"
+    allocation_modes:
+      independent_novelty:
+        lineage_credit: 0.00
+        novelty_bonus: 1.00
+        protection_priority: "high"
+      synchronistic_convergence:
+        lineage_credit: 0.10
+        novelty_bonus: 0.85
+        protection_priority: "high"
+      tolerated_derivation:
+        lineage_credit: 0.40
+        novelty_bonus: 0.35
+        protection_priority: "medium"
+      pseudo_structure:
+        lineage_credit: 0.00
+        novelty_bonus: 0.00
+        protection_priority: "none"
+
+  explainability:
+    required: true
+    explanation_fields:
+      - "top_neighbor_traces"
+      - "S"
+      - "P"
+      - "T"
+      - "N"
+      - "I"
+      - "B"
+      - "triggered_rules"
+      - "final_action"
+      - "human_readable_reason"
+
+  governance:
+    review_cycle_days: 30
+    threshold_update_policy: "human-supervised"
+    audit_required_for:
+      - "boundary_uncertain"
+      - "immune_bug_candidate"
+      - "high-impact rejection"
+    prohibited_behaviors:
+      - "similarity_only_rejection"
+      - "non-explainable auto-ban"
+      - "permanent legacy dominance without decay"
+      - "novelty suppression without review"
+
+  minimum_outputs:
+    - "immune classification report"
+    - "trace lineage graph"
+    - "tolerance decision log"
+    - "decay action log"
+    - "allocation bridge result"
+    - "audit trail"
+
+  implementation_notes:
+    - "v0.1 はコア仕様。実運用前提ではなく設計骨格"
+    - "まずは similarity/path/transformation の3指標で小さく回す"
+    - "偽陽性率の監視を必須にする"
+    - "新芽保護と既存権利保護の両立を目的とする"
+    - "将来的に immune map 可視化レイヤーを追加可能"
+
+  future_extensions:
+    - id: "ext-01"
+      name: "Immune Map Visualization"
+      description: "文明OS全体の免疫地図を可視化する"
+    - id: "ext-02"
+      name: "Tolerance Zone Auto-Tuning"
+      description: "寛容閾値を運用データから自動調整する"
+    - id: "ext-03"
+      name: "Cross-AI Boundary Arbitration"
+      description: "複数AI間の自己/非自己境界を裁定する"
+    - id: "ext-04"
+      name: "Royalty Immunization Profiles"
+      description: "作品群ごとに免疫プロファイルを切り替える"
