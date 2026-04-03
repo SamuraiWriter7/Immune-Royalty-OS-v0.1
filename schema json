@@ -1,0 +1,866 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/immune-royalty-os-v0.1.schema.json",
+  "title": "Immune Royalty OS v0.1 Schema",
+  "description": "JSON Schema for Immune Royalty OS v0.1 draft core specification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["immune_royalty_os"],
+  "properties": {
+    "immune_royalty_os": {
+      "$ref": "#/$defs/ImmuneRoyaltyOS"
+    }
+  },
+  "$defs": {
+    "StringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "Range01": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "ScoreDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["symbol", "range", "meaning"],
+      "properties": {
+        "symbol": { "type": "string" },
+        "range": {
+          "type": "array",
+          "prefixItems": [
+            { "type": "number" },
+            { "type": "number" }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "meaning": { "type": "string" }
+      }
+    },
+    "Principle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "description"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "NamedRole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description"],
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "Layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "role"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" }
+      }
+    },
+    "PathNodeSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step_id", "step_type", "content_hash", "source_trace_id", "timestamp"],
+      "properties": {
+        "step_id": { "type": "string" },
+        "step_type": {
+          "type": "string",
+          "enum": ["question", "reference", "transform", "transformation", "synthesis", "output"]
+        },
+        "content_hash": { "type": "string" },
+        "source_trace_id": {
+          "type": ["string", "null"]
+        },
+        "timestamp": { "type": "string" }
+      }
+    },
+    "TransformationLogSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transform_type", "description", "delta_score"],
+      "properties": {
+        "transform_type": {
+          "type": "string",
+          "enum": [
+            "rewrite",
+            "expand",
+            "compress",
+            "remix",
+            "abstract",
+            "invert",
+            "recombine",
+            "independent-arrival"
+          ]
+        },
+        "description": { "type": "string" },
+        "delta_score": { "$ref": "#/$defs/Range01" }
+      }
+    },
+    "RecordSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trace_id",
+        "timestamp",
+        "creator_type",
+        "creator_id",
+        "origin_question",
+        "parent_trace_ids",
+        "referenced_trace_ids",
+        "path_nodes",
+        "transformation_log",
+        "context_tags",
+        "generation_mode"
+      ],
+      "properties": {
+        "trace_id": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "creator_type": {
+          "type": "string",
+          "enum": ["human", "ai", "hybrid"]
+        },
+        "creator_id": { "type": "string" },
+        "origin_question": { "type": "string" },
+        "parent_trace_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "referenced_trace_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "path_nodes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "item_schema"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "list[object]"
+            },
+            "item_schema": {
+              "$ref": "#/$defs/PathNodeSchema"
+            }
+          }
+        },
+        "transformation_log": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "item_schema"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "list[object]"
+            },
+            "item_schema": {
+              "$ref": "#/$defs/TransformationLogSchema"
+            }
+          }
+        },
+        "context_tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "generation_mode": {
+          "type": "string",
+          "enum": ["original", "derived", "collaborative", "uncertain"]
+        },
+        "diff_signature": {
+          "type": ["string", "null"]
+        },
+        "confidence_score": {
+          "type": ["number", "null"]
+        },
+        "signature_verification": {
+          "type": ["string", "null"],
+          "enum": ["verified", "unverified", "unknown", null]
+        },
+        "notes": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "ImmuneClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description"],
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "Rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "condition", "action", "meaning"],
+      "properties": {
+        "id": { "type": "string" },
+        "condition": { "type": "string" },
+        "action": { "type": "string" },
+        "meaning": { "type": "string" }
+      }
+    },
+    "ActionEffect": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {}
+    },
+    "DecisionAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description"],
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "DecisionMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["immune_class", "action"],
+      "properties": {
+        "immune_class": { "type": "string" },
+        "action": { "type": "string" }
+      }
+    },
+    "BugCatalogItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "description", "indicators", "mitigation"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "indicators": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "mitigation": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "FutureExtension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "description"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "ImmuneRoyaltyOS": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "short_name",
+        "version",
+        "status",
+        "language",
+        "license_mode",
+        "purpose",
+        "design_principles",
+        "core_concepts",
+        "system_layers",
+        "actors",
+        "trace_model",
+        "immunity_engine",
+        "scoring",
+        "tolerance_layer",
+        "decay_layer",
+        "response_layer",
+        "pseudo_structure_detection",
+        "synchronistic_detection",
+        "immune_bug_catalog",
+        "royalty_bridge",
+        "explainability",
+        "governance",
+        "minimum_outputs",
+        "implementation_notes",
+        "future_extensions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "const": "immune-royalty-os-v0.1"
+        },
+        "title": {
+          "type": "string",
+          "const": "Immune Royalty OS v0.1"
+        },
+        "short_name": {
+          "type": "string",
+          "const": "IROS v0.1"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^0\\.1\\.0$"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft-core"]
+        },
+        "language": {
+          "type": "string",
+          "enum": ["ja", "en"]
+        },
+        "license_mode": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["summary", "objective"],
+          "properties": {
+            "summary": { "type": "string" },
+            "objective": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 1
+            }
+          }
+        },
+        "design_principles": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Principle" },
+          "minItems": 1
+        },
+        "core_concepts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "trace",
+            "path_trace",
+            "provenance",
+            "transformation",
+            "tolerance_zone",
+            "novelty_window",
+            "pseudo_structure",
+            "synchronistic_structure",
+            "immune_response",
+            "immune_bug"
+          ],
+          "properties": {
+            "trace": { "type": "string" },
+            "path_trace": { "type": "string" },
+            "provenance": { "type": "string" },
+            "transformation": { "type": "string" },
+            "tolerance_zone": { "type": "string" },
+            "novelty_window": { "type": "string" },
+            "pseudo_structure": { "type": "string" },
+            "synchronistic_structure": { "type": "string" },
+            "immune_response": { "type": "string" },
+            "immune_bug": { "type": "string" }
+          }
+        },
+        "system_layers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Layer" },
+          "minItems": 1
+        },
+        "actors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/NamedRole" },
+          "minItems": 1
+        },
+        "trace_model": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["lineage_model", "required_fields", "optional_fields", "record_schema"],
+          "properties": {
+            "lineage_model": {
+              "type": "string",
+              "enum": ["dag"]
+            },
+            "required_fields": {
+              "$ref": "#/$defs/StringArray"
+            },
+            "optional_fields": {
+              "$ref": "#/$defs/StringArray"
+            },
+            "record_schema": {
+              "$ref": "#/$defs/RecordSchema"
+            }
+          }
+        },
+        "immunity_engine": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["inputs", "outputs", "immune_classes"],
+          "properties": {
+            "inputs": {
+              "$ref": "#/$defs/StringArray"
+            },
+            "outputs": {
+              "$ref": "#/$defs/StringArray"
+            },
+            "immune_classes": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/ImmuneClass" },
+              "minItems": 1
+            }
+          }
+        },
+        "scoring": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "similarity_score",
+            "path_independence_score",
+            "transformation_score",
+            "novelty_score",
+            "concentration_score",
+            "inflammation_score",
+            "boundary_confusion_score",
+            "derived_metrics"
+          ],
+          "properties": {
+            "similarity_score": { "$ref": "#/$defs/ScoreDef" },
+            "path_independence_score": { "$ref": "#/$defs/ScoreDef" },
+            "transformation_score": { "$ref": "#/$defs/ScoreDef" },
+            "novelty_score": { "$ref": "#/$defs/ScoreDef" },
+            "concentration_score": { "$ref": "#/$defs/ScoreDef" },
+            "inflammation_score": { "$ref": "#/$defs/ScoreDef" },
+            "boundary_confusion_score": { "$ref": "#/$defs/ScoreDef" },
+            "derived_metrics": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "novelty_score_formula",
+                "pseudo_structure_risk_formula",
+                "inflammation_score_formula",
+                "boundary_confusion_formula",
+                "note"
+              ],
+              "properties": {
+                "novelty_score_formula": { "type": "string" },
+                "pseudo_structure_risk_formula": { "type": "string" },
+                "inflammation_score_formula": { "type": "string" },
+                "boundary_confusion_formula": { "type": "string" },
+                "note": { "type": "string" }
+              }
+            }
+          }
+        },
+        "tolerance_layer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["policy_goal", "parameters", "rules", "actions"],
+          "properties": {
+            "policy_goal": { "type": "string" },
+            "parameters": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "similarity_hold_threshold",
+                "path_independence_accept_threshold",
+                "transformation_accept_threshold",
+                "novelty_protection_window_days",
+                "tolerance_band_width",
+                "uncertain_boundary_hold"
+              ],
+              "properties": {
+                "similarity_hold_threshold": { "$ref": "#/$defs/Range01" },
+                "path_independence_accept_threshold": { "$ref": "#/$defs/Range01" },
+                "transformation_accept_threshold": { "$ref": "#/$defs/Range01" },
+                "novelty_protection_window_days": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "tolerance_band_width": { "$ref": "#/$defs/Range01" },
+                "uncertain_boundary_hold": { "type": "boolean" }
+              }
+            },
+            "rules": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/Rule" },
+              "minItems": 1
+            },
+            "actions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "apply_novelty_protection",
+                "hold_for_boundary_review",
+                "suppress_aggressive_response"
+              ],
+              "properties": {
+                "apply_novelty_protection": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["effect"],
+                  "properties": {
+                    "effect": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "lower_rejection_probability",
+                        "lower_trace_charge",
+                        "increase_review_time"
+                      ],
+                      "properties": {
+                        "lower_rejection_probability": { "$ref": "#/$defs/Range01" },
+                        "lower_trace_charge": { "$ref": "#/$defs/Range01" },
+                        "increase_review_time": { "type": "boolean" }
+                      }
+                    }
+                  }
+                },
+                "hold_for_boundary_review": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["effect"],
+                  "properties": {
+                    "effect": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["temporary_status", "require_human_audit"],
+                      "properties": {
+                        "temporary_status": {
+                          "type": "string",
+                          "const": "hold"
+                        },
+                        "require_human_audit": { "type": "boolean" }
+                      }
+                    }
+                  }
+                },
+                "suppress_aggressive_response": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["effect"],
+                  "properties": {
+                    "effect": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["max_response_level", "freeze_penalty_execution"],
+                      "properties": {
+                        "max_response_level": { "type": "string" },
+                        "freeze_penalty_execution": { "type": "boolean" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "decay_layer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["policy_goal", "parameters", "formulas", "rules", "actions"],
+          "properties": {
+            "policy_goal": { "type": "string" },
+            "parameters": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "lineage_decay_lambda",
+                "concentration_cap",
+                "accelerated_decay_trigger",
+                "accelerated_decay_multiplier",
+                "chronic_inflammation_trigger"
+              ],
+              "properties": {
+                "lineage_decay_lambda": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "concentration_cap": { "$ref": "#/$defs/Range01" },
+                "accelerated_decay_trigger": { "$ref": "#/$defs/Range01" },
+                "accelerated_decay_multiplier": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "chronic_inflammation_trigger": { "$ref": "#/$defs/Range01" }
+              }
+            },
+            "formulas": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "lineage_decay",
+                "accelerated_decay",
+                "concentration_penalty",
+                "inflammation_suppression"
+              ],
+              "properties": {
+                "lineage_decay": { "type": "string" },
+                "accelerated_decay": { "type": "string" },
+                "concentration_penalty": { "type": "string" },
+                "inflammation_suppression": { "type": "string" }
+              }
+            },
+            "rules": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/Rule" },
+              "minItems": 1
+            },
+            "actions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "apply_concentration_penalty",
+                "apply_inflammation_suppression",
+                "apply_accelerated_decay",
+                "increase_local_decay_for_detector",
+                "reduce_legacy_priority_temporarily"
+              ],
+              "properties": {
+                "apply_concentration_penalty": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["effect"],
+                  "properties": {
+                    "effect": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["reduce_allocation_weight", "redistribute_to_novelty_pool"],
+                      "properties": {
+                        "reduce_allocation_weight": { "$ref": "#/$defs/Range01" },
+                        "redistribute_to_novelty_pool": { "$ref": "#/$defs/Range01" }
+                      }
+                    }
+                  }
+                },
+                "apply_inflammation_suppression": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["effect"],
+                  "properties": {
+                    "effect": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["lower_auto_rejection", "require_explanation"],
+                      "properties": {
+                        "lower_auto_rejection": { "type": "boolean" },
+                        "require_explanation": { "type": "boolean" }
+                      }
+                    }
+                  }
+                },
+                "apply_accelerated_decay": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["effect"],
+                  "properties": {
+                    "effect": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["use_formula"],
+                      "properties": {
+                        "use_formula": { "type": "string" }
+                      }
+                    }
+                  }
+                },
+                "increase_local_decay_for_detector": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["effect"],
+                  "properties": {
+                    "effect": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["detector_sensitivity_reduction"],
+                      "properties": {
+                        "detector_sensitivity_reduction": { "$ref": "#/$defs/Range01" }
+                      }
+                    }
+                  }
+                },
+                "reduce_legacy_priority_temporarily": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["effect"],
+                  "properties": {
+                    "effect": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["legacy_weight_multiplier", "review_after_days"],
+                      "properties": {
+                        "legacy_weight_multiplier": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "review_after_days": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "response_layer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["policy_goal", "actions", "decision_matrix"],
+          "properties": {
+            "policy_goal": { "type": "string" },
+            "actions": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/DecisionAction" },
+              "minItems": 1
+            },
+            "decision_matrix": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/DecisionMap" },
+              "minItems": 1
+            }
+          }
+        },
+        "pseudo_structure_detection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["definition", "signals", "reject_condition"],
+          "properties": {
+            "definition": { "type": "string" },
+            "signals": {
+              "$ref": "#/$defs/StringArray"
+            },
+            "reject_condition": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["expression", "action"],
+              "properties": {
+                "expression": { "type": "string" },
+                "action": { "type": "string" }
+              }
+            }
+          }
+        },
+        "synchronistic_detection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["definition", "signals", "accept_condition"],
+          "properties": {
+            "definition": { "type": "string" },
+            "signals": {
+              "$ref": "#/$defs/StringArray"
+            },
+            "accept_condition": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["expression", "action"],
+              "properties": {
+                "expression": { "type": "string" },
+                "action": { "type": "string" }
+              }
+            }
+          }
+        },
+        "immune_bug_catalog": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/BugCatalogItem" },
+          "minItems": 1
+        },
+        "royalty_bridge": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["description", "allocation_modes"],
+          "properties": {
+            "description": { "type": "string" },
+            "allocation_modes": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "independent_novelty",
+                "synchronistic_convergence",
+                "tolerated_derivation",
+                "pseudo_structure"
+              ],
+              "properties": {
+                "independent_novelty": { "$ref": "#/$defs/AllocationMode" },
+                "synchronistic_convergence": { "$ref": "#/$defs/AllocationMode" },
+                "tolerated_derivation": { "$ref": "#/$defs/AllocationMode" },
+                "pseudo_structure": { "$ref": "#/$defs/AllocationMode" }
+              }
+            }
+          }
+        },
+        "explainability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "explanation_fields"],
+          "properties": {
+            "required": { "type": "boolean" },
+            "explanation_fields": {
+              "$ref": "#/$defs/StringArray"
+            }
+          }
+        },
+        "governance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "review_cycle_days",
+            "threshold_update_policy",
+            "audit_required_for",
+            "prohibited_behaviors"
+          ],
+          "properties": {
+            "review_cycle_days": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "threshold_update_policy": { "type": "string" },
+            "audit_required_for": {
+              "$ref": "#/$defs/StringArray"
+            },
+            "prohibited_behaviors": {
+              "$ref": "#/$defs/StringArray"
+            }
+          }
+        },
+        "minimum_outputs": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "implementation_notes": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "future_extensions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/FutureExtension" }
+        }
+      }
+    },
+    "AllocationMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lineage_credit", "novelty_bonus", "protection_priority"],
+      "properties": {
+        "lineage_credit": {
+          "type": "number",
+          "minimum": 0
+        },
+        "novelty_bonus": {
+          "type": "number",
+          "minimum": 0
+        },
+        "protection_priority": {
+          "type": "string",
+          "enum": ["none", "low", "medium", "high"]
+        }
+      }
+    }
+  }
+}
