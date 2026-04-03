@@ -1,0 +1,64 @@
+name: Validate IROS Schema
+
+on:
+  push:
+    paths:
+      - ".github/workflows/validate-iros-schema.yml"
+      - "immune-royalty-os-v0.1.schema.json"
+      - "immune-royalty-os-v0.1.sample.json"
+  pull_request:
+    paths:
+      - ".github/workflows/validate-iros-schema.yml"
+      - "immune-royalty-os-v0.1.schema.json"
+      - "immune-royalty-os-v0.1.sample.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate schema and sample
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      SCHEMA_FILE: immune-royalty-os-v0.1.schema.json
+      SAMPLE_FILE: immune-royalty-os-v0.1.sample.json
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          package-manager-cache: false
+
+      - name: Show target files
+        run: |
+          echo "Schema: ${SCHEMA_FILE}"
+          echo "Sample: ${SAMPLE_FILE}"
+          test -f "${SCHEMA_FILE}"
+          test -f "${SAMPLE_FILE}"
+
+      - name: Validate schema structure
+        run: |
+          npx --yes ajv-cli@5.0.0 compile \
+            -s "${SCHEMA_FILE}" \
+            --spec=draft2020 \
+            --strict=false
+
+      - name: Validate sample against schema
+        run: |
+          npx --yes ajv-cli@5.0.0 validate \
+            -s "${SCHEMA_FILE}" \
+            -d "${SAMPLE_FILE}" \
+            --spec=draft2020 \
+            --strict=false
+
+      - name: Success summary
+        run: |
+          echo "IROS schema is valid."
+          echo "Sample JSON conforms to the schema."
